@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Habits App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        * { -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-20 bg-gray-50/90 backdrop-blur-md border-b border-gray-200/50 px-6 pt-12 pb-4">
+        <div class="flex justify-between items-end">
+            <div>
+                <p id="header-dia-semana" class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Cargando...</p>
+                <h1 id="header-fecha" class="text-3xl font-bold tracking-tight text-gray-900">...</h1>
+            </div>
+            <div class="h-10 w-10 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 px-4 pt-6 pb-32 overflow-y-auto no-scrollbar">
+        
+        <div id="week-strip" class="flex justify-between items-center mb-8 px-1">
+            
+        </div>
+
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h2 class="text-lg font-bold text-gray-800">Tus Objetivos</h2>
+            
+            <button onclick="toggleDeleteMode()" id="btn-trash-mode" class="p-2 rounded-full text-red-300 hover:text-red-500 hover:bg-red-50 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+
+            
+        </div>
+
+        <!-- HABITOS -->
+        <div id="lista-habitos" class="space-y-3"></div>
+        
+
+        <div class="mt-8 bg-black rounded-3xl p-6 text-white shadow-xl shadow-gray-400/50 relative overflow-hidden transition-all duration-500">
+            <div class="relative z-10">
+                <span class="text-gray-400 text-xs font-bold uppercase">Progreso Diario</span>
+                <div id="progress-text" class="text-4xl font-bold mt-1">0%</div>
+                <p id="progress-msg" class="text-sm text-gray-400 mt-2">¡Vamos a por ello!</p>
+            </div>
+            <div class="absolute -right-6 -bottom-10 w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full blur-2xl opacity-50"></div>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white/80 backdrop-blur-xl border-t border-gray-200 pb-safe pt-2 px-6 z-50">
+        <div class="flex justify-between items-center max-w-md mx-auto h-16">
+            <button class="flex flex-col items-center gap-1 text-blue-600 w-16">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                <span class="text-[10px] font-medium">Hoy</span>
+            </button>
+            <a class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 w-16" href="calendario.html">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span class="text-[10px] font-medium">Mes</span>
+            </a>
+            <button id="main-fab" onclick="handleFabClick()" class="bg-black text-white rounded-full p-4 -mt-8 shadow-lg shadow-blue-900/20 active:scale-90 transition-all duration-300">
+    
+                <svg id="fab-icon-plus" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+            
+                <svg id="fab-icon-trash" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            
+            </button>
+            <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 w-16">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                <span class="text-[10px] font-medium">Stats</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 w-16">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-[10px] font-medium">Ajustes</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- EMERGENTE -->
+    <div id="modal-nuevo-habito" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none">
+    
+        <div id="modal-overlay" onclick="closeModal()" class="fixed inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-auto"></div>
+    
+        <div id="modal-card" class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-8 relative z-10 transform translate-y-full transition-transform duration-300 shadow-2xl pointer-events-auto h-[85vh] sm:h-auto flex flex-col">
+            
+            <div class="flex justify-between items-center mb-6 flex-shrink-0">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 tracking-tight">Nuevo Hábito</h3>
+                    <p class="text-sm text-gray-400 font-medium">Personaliza tu estilo</p>
+                </div>
+                <button onclick="closeModal()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+    
+            <div class="overflow-y-auto no-scrollbar flex-1 space-y-6 pb-4 p-2">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre</label>
+                        <input type="text" id="input-nombre" placeholder="Ej: Yoga Matutino" class="w-full p-4 bg-gray-50 rounded-2xl text-xl font-bold text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-2 focus:ring-black focus:outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Subtítulo</label>
+                        <input type="text" id="input-detalle" placeholder="Ej: 30 minutos" class="w-full p-4 bg-gray-50 rounded-2xl text-sm font-medium text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-2 focus:ring-gray-200 focus:outline-none transition-all">
+                    </div>
+                </div>
+    
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Color del Hábito</label>
+                    <div id="container-colors" class="flex gap-4 overflow-x-auto p-2 -mx-2 no-scrollbar scroll-smooth cursor-grab active:cursor-grabbing">
+                        </div>
+                </div>
+    
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Icono</label>
+                    <div id="container-icons" class="grid grid-flow-col auto-cols-max gap-3 overflow-x-auto p-2 -mx-2 no-scrollbar scroll-smooth cursor-grab active:cursor-grabbing">
+                        </div>
+                </div>
+    
+                <input type="hidden" id="selected-icon" value="📚">
+                <input type="hidden" id="selected-color" value="blue">
+    
+            </div>
+    
+            <div class="pt-4 mt-2 border-t border-gray-100 flex-shrink-0">
+                <button onclick="saveNewHabit()" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-gray-300 active:scale-95 transition-transform hover:shadow-2xl flex items-center justify-center gap-2">
+                    <span>Crear Hábito</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+    
+        </div>
+    </div>
+
+
+    <!-- EMERGENTE PARA BORRAR -->
+    <div id="modal-borrar-habito" class="hidden fixed inset-0 z-50 flex items-center justify-center pointer-events-none px-4">
+    
+        <div id="delete-overlay" onclick="closeDeleteModal()" class="fixed inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-auto"></div>
+        
+        <div id="delete-card" class="bg-white w-full max-w-sm rounded-3xl p-6 relative z-10 transform scale-95 opacity-0 transition-all duration-300 shadow-2xl pointer-events-auto text-center">
+            
+            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </div>
+            
+            <h3 class="text-xl font-bold text-gray-900 mb-2">¿Eliminar objetivos?</h3>
+            <p class="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer. Los hábitos seleccionados desaparecerán de tu lista.</p>
+            
+            <div class="flex gap-3">
+                <button onclick="closeModalDelete()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="executeDeletion()" class="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-red-200 hover:bg-red-600 active:scale-95 transition-all">
+                    Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
