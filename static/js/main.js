@@ -1,5 +1,3 @@
-// --- 2. INICIALIZACIÓN ---
-
 document.addEventListener('DOMContentLoaded', () => {
     // Si estamos en el index (pantalla Hoy)
     if (document.getElementById('lista-habitos')) {
