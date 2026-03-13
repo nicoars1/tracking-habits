@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Iniciar Sesión - Habits App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        * { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-center relative overflow-hidden px-4">
+
+    <div class="absolute -top-20 -left-20 w-72 h-72 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
+    <div class="absolute -bottom-20 -right-20 w-72 h-72 bg-gradient-to-tl from-orange-300 to-red-400 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
+
+    <main class="w-full max-w-md mx-auto relative z-10">
+        
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-2">¡Hola de nuevo!</h1>
+            <p class="text-gray-500 font-medium">Inicia sesión para retomar tus objetivos.</p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+            <a href="/" class="absolute left-0 top-1 p-2 bg-white rounded-full text-gray-800 shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </a>
+            <form action="index.html" class="space-y-5">
+                
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                    <input type="email" placeholder="ejemplo@correo.com" required
+                           class="w-full p-4 bg-gray-50 rounded-2xl text-base font-bold text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-2 focus:ring-black focus:outline-none transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Contraseña</label>
+                    <input type="password" placeholder="••••••••" required
+                           class="w-full p-4 bg-gray-50 rounded-2xl text-base font-bold text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-2 focus:ring-black focus:outline-none transition-all">
+                </div>
+
+                <div class="flex justify-end">
+                    <a href="#" class="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-gray-300 active:scale-95 transition-transform hover:shadow-2xl mt-4">
+                    Entrar
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-gray-500 font-medium">¿No tienes una cuenta? 
+                <a href="register" class="text-black font-bold hover:underline">Regístrate aquí</a>
+            </p>
+        </div>
+
+    </main>
+</body>
+</html>
