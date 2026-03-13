@@ -127,7 +127,9 @@ function render() {
     
     const percentage = habits.length > 0 ? Math.round((completedCount / activeHabits.length) * 100) : 0;
     const progressText = document.getElementById('progress-text');
+    
     if(progressText) progressText.innerText = `${percentage}%`;
+    if(isNaN(percentage)) progressText.innerText = "0%"
 }
 
 function renderWeekStrip() {
