@@ -1,12 +1,20 @@
 from flask import Flask, render_template, redirect, url_for, session, request, flash
 from flask_bcrypt import Bcrypt # Hash para contraseñas
 import re # Para la validación de emails
+import os # Para las claves
+from pymongo import MongoClient
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 # Emails válidos
 EMAIL_RE = re.compile(r'^[^@/s]+@[^@\s]+\.[^@/s]+$')
+
+# Base de datos
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+client = MongoClient(f"mongodb+srv://habitsUsers:{DB_PASSWORD}@habitsuser.eevbec1.mongodb.net/?appName=habitsUser")
+db = client["db"]
+collection = db["users"]
 
 @app.route('/')
 def home():
