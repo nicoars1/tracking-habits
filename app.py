@@ -8,7 +8,7 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 # Emails válidos
-EMAIL_RE = re.compile(r'^[^@/s]+@[^@\s]+\.[^@/s]+$')
+EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 
 # Base de datos
 DB_PASSWORD = os.getenv("DB_PASSWORD")
