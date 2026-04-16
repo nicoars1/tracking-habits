@@ -6,6 +6,7 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
+app.secret_key = os.urandom(24)
 
 # Emails válidos
 EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
@@ -30,24 +31,24 @@ def user():
         return redirect(url_for('login'))
     return redirect(url_for('home')) # La idea es que si el usuario tiene sesión iniciada lo lleve a un dashboard de usuario
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         user = request.form['user']
         password = request.form['password']
 
         # Buscar usuario en base de datos
-        user_doc = collection.find_one({'user: user'})
+        user_doc = collection.find_one({'user': user})
 
         #Verificar si las credenciales son correctas
         if user_doc and bcrypt.check_password_hash(user_doc['password'], password):
             if not user_doc.get('verified', False):
-               # flash("Debe verificar su email antes de iniciar sesión")
+                flash("Debe verificar su email antes de iniciar sesión", 'error')
                 return redirect(url_for('login'))
             session['user'] = user_doc['user']
             return redirect(url_for('home'))
         else:
-            flash("Usuario o contraseña incorrectos")
+            flash("Usuario o contraseña incorrectos", 'error')
             return redirect(url_for('login'))
         
     return render_template('login.html')
