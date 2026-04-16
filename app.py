@@ -15,7 +15,6 @@ bcrypt = Bcrypt(app)
 app.secret_key = os.getenv('SECRET_KEY')
 
 
-
 # Base de datos
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 client = MongoClient(f"mongodb+srv://habitsUsers:{DB_PASSWORD}@habitsuser.eevbec1.mongodb.net/?appName=habitsUser")
@@ -54,6 +53,8 @@ def enviar_email(destinatario, asunto, contenido_html):
         print(f"Error enviando email: {e}")
         return False
 
+# Rutas
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -66,7 +67,8 @@ def calendario():
 def user():
     if 'user' not in session:
         return redirect(url_for('login'))
-    return redirect(url_for('home')) # La idea es que si el usuario tiene sesión iniciada lo lleve a un dashboard de usuario
+    return render_template('user.html') # La idea es que si el usuario tiene sesión iniciada lo lleve a un dashboard de usuario
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -125,20 +127,111 @@ def register():
             flash("La contraseña debe tener al menos 8 caracteres")
             return redirect(url_for('register'))
         
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        collection.insert_one({
-            'user': user,
-            'email': email,
-            'password': hashed_password,
-            'verified': False
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    collection.insert_one({
+        'user': user,
+        'email': email,
+        'password': hashed_password,
+        'verified': False
         })
 
-        # Enviar mail de verificacion
-        token = generar_token(email, salt='verificacion-email')
-        link = url_for('verificar_email', token=token, _external=True)
-        enviado = enviar_email(
+    # Enviar mail de verificacion
+    token = generar_token(email, salt='verificacion-email')
+    link = url_for('verificar_email', token=token, _external=True)
+    enviado = enviar_email(
+        email,
+        "Verificá tu cuenta - Habits App",
+        f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+         </head>
+        <body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; padding: 40px 20px;">
+                 <tr>
+                    <td align="center">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; background-color: #ffffff; border-radius: 24px; padding: 40px 32px; text-align: center; border: 1px solid #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                                
+                            <tr>
+                                  <td align="center" style="padding-bottom: 24px;">
+                                     <div style="width: 60px; height: 60px; background-color: #000000; border-radius: 16px; font-size: 28px; line-height: 60px; text-align: center;">
+                                           ✨
+                                       </div>
+                                 </td>
+                             </tr>
+
+                             <tr>
+                                  <td style="padding-bottom: 16px;">
+                                     <h2 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">
+                                           ¡Hola, {user}!
+                                       </h2>
+                                  </td>
+                             </tr>
+
+                             <tr>
+                                <td style="padding-bottom: 32px;">
+                                       <p style="color: #6b7280; font-size: 16px; line-height: 1.6;margin: 0;">
+                                          Estás a un paso de empezar a construir tu mejor versión. Hacé clic en el botón de abajo para verificar tu correo y activar tu progreso.
+                                        </p>
+                                  </td>
+                              </tr>
+
+                             <tr>
+                                  <td style="padding-bottom: 32px;">
+                                      <a href="{link}" style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; padding: 16px 32px; border-radius: 16px;">
+                                            Verificar mi cuenta
+                                    </a>
+                                 </td>
+                             </tr>
+
+                             <tr>
+                                 <td style="padding-bottom: 24px;">
+                                    <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 0;">
+                                    </td>
+                             </tr>
+
+                             <tr>
+                                <td>
+                                     <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin: 0;">
+                                            Este enlace expira en 1 hora.<br>
+                                           Si no creaste esta cuenta, simplemente ignorá este mensaje.
+                                     </p>
+                                 </td>
+                             </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+         </body>
+        </html>
+         """
+    )
+
+    if enviado:
+        flash("Revisá tu correo para verificar tu cuenta", 'success')
+    else:
+        flash("No se pudo enviar el correo de verificación. Si el problema persiste contactar con soporte.", 'error')
+
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+# Página para reset password
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        user_doc = collection.find_one({'email': email})
+
+        flash("Si el correo es válido, vas a recibir un enlace para recuperar tu contraseña")
+
+        if user_doc:
+            token = generar_token(email, salt='recuperar-password')
+            link = url_for('reset', token=token, _external=True)
+            enviado = enviar_email(
             email,
-            "Verificá tu cuenta - Habits App",
+            "Recuperá tu contraseña - Habits App",
             f"""
             <!DOCTYPE html>
             <html>
@@ -154,7 +247,7 @@ def register():
                                 <tr>
                                     <td align="center" style="padding-bottom: 24px;">
                                         <div style="width: 60px; height: 60px; background-color: #000000; border-radius: 16px; font-size: 28px; line-height: 60px; text-align: center;">
-                                            ✨
+                                            🔐
                                         </div>
                                     </td>
                                 </tr>
@@ -162,7 +255,7 @@ def register():
                                 <tr>
                                     <td style="padding-bottom: 16px;">
                                         <h2 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">
-                                            ¡Hola, {user}!
+                                            Recuperación de contraseña
                                         </h2>
                                     </td>
                                 </tr>
@@ -170,7 +263,7 @@ def register():
                                 <tr>
                                     <td style="padding-bottom: 32px;">
                                         <p style="color: #6b7280; font-size: 16px; line-height: 1.6; margin: 0;">
-                                            Estás a un paso de empezar a construir tu mejor versión. Hacé clic en el botón de abajo para verificar tu correo y activar tu progreso.
+                                            Recibimos una solicitud para restablecer la contraseña de tu cuenta. Hacé clic en el botón de abajo para crear una nueva.
                                         </p>
                                     </td>
                                 </tr>
@@ -178,7 +271,7 @@ def register():
                                 <tr>
                                     <td style="padding-bottom: 32px;">
                                         <a href="{link}" style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; padding: 16px 32px; border-radius: 16px;">
-                                            Verificar mi cuenta
+                                            Cambiar contraseña
                                         </a>
                                     </td>
                                 </tr>
@@ -192,8 +285,8 @@ def register():
                                 <tr>
                                     <td>
                                         <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin: 0;">
-                                            Este enlace expira en 1 hora.<br>
-                                            Si no creaste esta cuenta, simplemente ignorá este mensaje.
+                                            Este enlace expira en 30 minutos.<br>
+                                            Si no pediste este cambio, tu cuenta sigue siendo segura y podés ignorar este mensaje.
                                         </p>
                                     </td>
                                 </tr>
@@ -205,13 +298,45 @@ def register():
             </body>
             </html>
             """
-        )
-
-        if enviado:
-            flash("Revisá tu correo para verificar tu cuenta", 'success')
-        else:
-            flash("No se pudo enviar el correo de verificación. Si el problema persiste contactar con soporte.", 'error')
-
+            )
         return redirect(url_for('login'))
-    return render_template('register.html')
+    
+    return render_template('reset_password.html')
 
+@app.route('/reset/<token>', methods=['GET', 'POST'])
+def reset(token):
+    # 30 min de expiracion
+    email = verificar_token(token, salt='recuperar-password', max_age=1800)
+    if not email:
+        flash("El enlace es inválido o expiró", 'error')
+        return redirect(url_for('reset_password'))
+    
+    if request.method == 'POST':
+        nueva = request.form['password']
+        confirma = request.form['confirm_password']
+
+        if nueva != confirma:
+            flash("Las contraseñas no coinciden", 'error')
+            return redirect(url_for('reset', token=token))
+        
+        if len(nueva) < 8:
+            flash("La contraseña debe tener al menos 8 caracteres", 'error')
+            return redirect(url_for('reset', token=token))
+        
+        if len(nueva) > 128:
+            flash("La contraseña no puede tener más de 100 caracteres", 'error')
+            return redirect(url_for('reset', token=token))
+        
+        hashed = bcrypt.generate_password_hash(nueva).decode('utf-8')
+        collection.update_one({'email': email}, {'$set': {'password': hashed}})
+        flash("Contraseña actualizada correctamente")
+        return redirect(url_for('login'))
+    
+    return render_template('reset.html', token=token)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("Sesión cerrada correctamente")
+    return redirect(url_for('home'))
