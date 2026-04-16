@@ -110,35 +110,38 @@ def register():
         email = str(request.form['email']).lower().strip()
         password = request.form['password']
 
-        # Validamos mails y contraseñas
+        # Validaciones
         if not EMAIL_RE.match(email):
-            flash("El email no tiene un formato válido")
+            flash("El email no tiene un formato válido", 'error')
             return redirect(url_for('register'))
-        
+
         if collection.find_one({'$or': [{'email': email}, {'user': user}]}):
-            flash("El correo o el usuario ya existen")
+            flash("El correo o el usuario ya existen", 'error')
             return redirect(url_for('register'))
-        
+
         if len(password) > 128:
-            flash("La contraseña es demasiado larga")
+            flash("La contraseña es demasiado larga", 'error')
             return redirect(url_for('register'))
-        
+
         if len(password) < 8:
-            flash("La contraseña debe tener al menos 8 caracteres")
+            flash("La contraseña debe tener al menos 8 caracteres", 'error')
             return redirect(url_for('register'))
-        
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    collection.insert_one({
-        'user': user,
-        'email': email,
-        'password': hashed_password,
-        'verified': False
+
+        # Hash + guardar
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        collection.insert_one({
+            'user': user,
+            'email': email,
+            'password': hashed_password,
+            'verified': False
         })
 
-    # Enviar mail de verificacion
-    token = generar_token(email, salt='verificacion-email')
-    link = url_for('verificar_email', token=token, _external=True)
-    enviado = enviar_email(
+        # Email de verificación
+        token = generar_token(email, salt='verificacion-email')
+        link = url_for('verificar_email', token=token, _external=True)
+
+        enviado = enviar_email(
         email,
         "Verificá tu cuenta - Habits App",
         f"""
@@ -146,75 +149,76 @@ def register():
         <html>
         <head>
             <meta charset="UTF-8">
-         </head>
+        </head>
         <body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; padding: 40px 20px;">
-                 <tr>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; padding: 40px 20px;">
+                <tr>
                     <td align="center">
-                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; background-color: #ffffff; border-radius: 24px; padding: 40px 32px; text-align: center; border: 1px solid #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                                
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; background-color: #ffffff; border-radius: 24px; padding: 40px 32px; text-align: center; border: 1px solid #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                            
                             <tr>
-                                  <td align="center" style="padding-bottom: 24px;">
-                                     <div style="width: 60px; height: 60px; background-color: #000000; border-radius: 16px; font-size: 28px; line-height: 60px; text-align: center;">
-                                           ✨
-                                       </div>
-                                 </td>
-                             </tr>
+                                <td align="center" style="padding-bottom: 24px;">
+                                    <div style="width: 60px; height: 60px; background-color: #000000; border-radius: 16px; font-size: 28px; line-height: 60px; text-align: center;">
+                                        ✨
+                                    </div>
+                                </td>
+                            </tr>
 
-                             <tr>
-                                  <td style="padding-bottom: 16px;">
-                                     <h2 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">
-                                           ¡Hola, {user}!
-                                       </h2>
-                                  </td>
-                             </tr>
+                            <tr>
+                                <td style="padding-bottom: 16px;">
+                                    <h2 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">
+                                        ¡Hola, {user}!
+                                    </h2>
+                                </td>
+                            </tr>
 
-                             <tr>
+                            <tr>
                                 <td style="padding-bottom: 32px;">
-                                       <p style="color: #6b7280; font-size: 16px; line-height: 1.6;margin: 0;">
-                                          Estás a un paso de empezar a construir tu mejor versión. Hacé clic en el botón de abajo para verificar tu correo y activar tu progreso.
-                                        </p>
-                                  </td>
-                              </tr>
+                                    <p style="color: #6b7280; font-size: 16px; line-height: 1.6; margin: 0;">
+                                        Estás a un paso de empezar a construir tu mejor versión. Hacé clic en el botón de abajo para verificar tu correo y activar tu progreso.
+                                    </p>
+                                </td>
+                            </tr>
 
-                             <tr>
-                                  <td style="padding-bottom: 32px;">
-                                      <a href="{link}" style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; padding: 16px 32px; border-radius: 16px;">
-                                            Verificar mi cuenta
+                            <tr>
+                                <td style="padding-bottom: 32px;">
+                                    <a href="{link}" style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; padding: 16px 32px; border-radius: 16px;">
+                                        Verificar mi cuenta
                                     </a>
-                                 </td>
-                             </tr>
+                                </td>
+                            </tr>
 
-                             <tr>
-                                 <td style="padding-bottom: 24px;">
+                            <tr>
+                                <td style="padding-bottom: 24px;">
                                     <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 0;">
-                                    </td>
-                             </tr>
+                                </td>
+                            </tr>
 
-                             <tr>
+                            <tr>
                                 <td>
-                                     <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin: 0;">
-                                            Este enlace expira en 1 hora.<br>
-                                           Si no creaste esta cuenta, simplemente ignorá este mensaje.
-                                     </p>
-                                 </td>
-                             </tr>
+                                    <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin: 0;">
+                                        Este enlace expira en 1 hora.<br>
+                                        Si no creaste esta cuenta, simplemente ignorá este mensaje.
+                                    </p>
+                                </td>
+                            </tr>
 
                         </table>
                     </td>
                 </tr>
             </table>
-         </body>
+        </body>
         </html>
-         """
+        """
     )
 
-    if enviado:
-        flash("Revisá tu correo para verificar tu cuenta", 'success')
-    else:
-        flash("No se pudo enviar el correo de verificación. Si el problema persiste contactar con soporte.", 'error')
+        if enviado:
+            flash("Revisá tu correo para verificar tu cuenta", 'success')
+        else:
+            flash("No se pudo enviar el correo de verificación", 'error')
 
         return redirect(url_for('login'))
+
     return render_template('register.html')
 
 # Página para reset password
