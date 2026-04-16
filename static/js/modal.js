@@ -182,3 +182,31 @@ function updateIconVisuals() {
         }
     });
 }
+
+// --- FUNCIONES PARA EL MODAL DE PERFIL ---
+
+function openProfileModal() {
+    const modal = document.getElementById('modal-perfil');
+    const overlay = document.getElementById('profile-overlay');
+    const card = document.getElementById('profile-card');
+
+    modal.classList.remove('hidden');
+
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        card.classList.remove('translate-y-full');
+    }, 10);
+}
+
+function closeProfileModal() {
+    const modal = document.getElementById('modal-perfil');
+    const overlay = document.getElementById('profile-overlay');
+    const card = document.getElementById('profile-card');
+
+    overlay.classList.add('opacity-0');
+    card.classList.add('translate-y-full');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
