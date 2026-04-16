@@ -32,6 +32,24 @@ def user():
 
 @app.route('/login')
 def login():
+    if request.method == 'POST':
+        user = request.form['user']
+        password = request.form['password']
+
+        # Buscar usuario en base de datos
+        user_doc = collection.find_one({'user: user'})
+
+        #Verificar si las credenciales son correctas
+        if user_doc and bcrypt.check_password_hash(user_doc['password'], password):
+            if not user_doc.get('verified', False):
+               # flash("Debe verificar su email antes de iniciar sesión")
+                return redirect(url_for('login'))
+            session['user'] = user_doc['user']
+            return redirect(url_for('home'))
+        else:
+            flash("Usuario o contraseña incorrectos")
+            return redirect(url_for('login'))
+        
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -68,3 +86,4 @@ def register():
 
         return redirect(url_for('login'))
     return render_template('register.html')
+
