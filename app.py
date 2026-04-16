@@ -57,7 +57,11 @@ def enviar_email(destinatario, asunto, contenido_html):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    if 'user' in session:
+        usuario_actual = collection.find_one({'user':session['user']})
+        email_actual = collection.find_one({'email':session['user']})
+
+    return render_template('index.html', usuario=usuario_actual, email=email_actual)
 
 @app.route('/calendario')
 def calendario():
@@ -69,6 +73,15 @@ def user():
         return redirect(url_for('login'))
     return render_template('user.html') # La idea es que si el usuario tiene sesión iniciada lo lleve a un dashboard de usuario
 
+@app.route('/settings')
+def settings():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    usuario_actual = collection.find_one({'user':session['user']})
+    email_actual = collection.find_one({'email':session['user']})
+
+    return render_template('settings.html', usuario=usuario_actual, email=email_actual)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
