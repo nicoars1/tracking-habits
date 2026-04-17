@@ -57,6 +57,9 @@ def enviar_email(destinatario, asunto, contenido_html):
 
 @app.route('/')
 def home():
+    usuario_actual = None
+    email_actual = None
+    
     if 'user' in session:
         usuario_actual = collection.find_one({'user':session['user']})
         email_actual = collection.find_one({'email':session['user']})
@@ -350,6 +353,29 @@ def reset(token):
         return redirect(url_for('login'))
     
     return render_template('reset.html', token=token)
+
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    borrar_usuario = session['user']
+
+    try:
+        resultado = collection.delete_one({'user': borrar_usuario})
+
+        if resultado.deleted_count > 0:
+            session.clear()
+            flash("Tu cuenta ha sido eliminada permanentemente. Esperamos verte pronto.", 'success')
+            return redirect(url_for('home'))
+        
+        else:
+            flash("No se pudo encontrar la cuenta para eliminar.", 'error')
+            return redirect(url_for('settings'))
+        
+    except Exception as e:
+        print(f"Error al eliminar la cuenta: {e}")
+        return redirect(url_for('settings'))
 
 
 @app.route('/logout')

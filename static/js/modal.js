@@ -210,3 +210,32 @@ function closeProfileModal() {
         modal.classList.add('hidden');
     }, 300);
 }
+
+// --- FUNCION PARA EL MODAL DE BORRAR CUENTA ---
+function openDeleteAccountModal() {
+    const modal = document.getElementById('modal-borrar-cuenta');
+    const overlay = document.getElementById('delete-account-overlay');
+    const card = document.getElementById('delete-account-card');
+
+    modal.classList.remove('hidden');
+    
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        // Quitamos la reducción de escala y la invisibilidad para que haga "zoom in"
+        card.classList.remove('scale-95', 'opacity-0');
+    }, 10);
+}
+
+function closeDeleteAccountModal() {
+    const modal = document.getElementById('modal-borrar-cuenta');
+    const overlay = document.getElementById('delete-account-overlay');
+    const card = document.getElementById('delete-account-card');
+
+    overlay.classList.add('opacity-0');
+    // Volvemos a achicar la tarjeta para que desaparezca
+    card.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
