@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 from itsdangerous import URLSafeTimedSerializer as Serializer
+from datetime import datetime
 
 load_dotenv()
 app = Flask(__name__)
@@ -97,6 +98,11 @@ def login():
 
         #Verificar si las credenciales son correctas
         if user_doc and bcrypt.check_password_hash(user_doc['password'], password):
+            collection.update_one(
+            {'user': user_doc['user']},
+            {'$set': {'last_login': datetime.utcnow()}}
+            )
+
             if not user_doc.get('verified', False):
                 flash("Debe verificar su email antes de iniciar sesión", 'error')
                 return redirect(url_for('login'))
@@ -150,7 +156,13 @@ def register():
             'user': user,
             'email': email,
             'password': hashed_password,
-            'verified': False
+            'verified': False,
+            'created_at': datetime.utcnow(),
+            'last_login': None,
+            'motivation': '',
+            'notifications_enabled': False,
+            'habits': [],
+            'total_completed': 0
         })
 
         # Email de verificación
