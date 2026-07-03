@@ -10,11 +10,11 @@ function nextMonth() {
     renderCalendar();
 }
 
-function renderCalendar() {
+async function renderCalendar() {
     const grid = document.getElementById('calendar-grid');
     if (!grid) return;
 
-    const habits = loadData();
+    const habits = await loadData();
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
     

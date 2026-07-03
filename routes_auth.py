@@ -42,21 +42,20 @@ def register():
         # Validaciones
         if not EMAIL_RE.match(email):
             flash("El email no tiene un formato válido", 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('auth.register'))
 
         if collection.find_one({'$or': [{'email': email}, {'user': user}]}):
             flash("El correo o el usuario ya existen", 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('auth.register'))
 
         if len(password) > 128:
             flash("La contraseña es demasiado larga", 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('auth.register'))
 
         if len(password) < 8:
             flash("La contraseña debe tener al menos 8 caracteres", 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('auth.register'))
 
-        # Hash + guardar
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         collection.insert_one({
@@ -74,7 +73,7 @@ def register():
 
         # Email de verificación
         token = generar_token(email, salt='verificacion-email')
-        link = url_for('verificar_email', token=token, _external=True)
+        link = url_for('auth.verificar_email', token=token, _external=True)
 
         enviado = enviar_email(
         email,
@@ -152,7 +151,7 @@ def register():
         else:
             flash("No se pudo enviar el correo de verificación", 'error')
 
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
 
     return render_template('register.html')
 
@@ -161,11 +160,11 @@ def verificar_email(token):
     email = verificar_token(token, salt='verificacion-email', max_age=3600)
     if not email:
         flash("El enlace es inválido o expiró", 'error')
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
     
     collection.update_one({'email': email}, {'$set': {'verified': True}})
     flash("Email verificado correctamente.")
-    return redirect(url_for('login'))
+    return redirect(url_for('auth.login'))
 
 @auth_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
@@ -177,7 +176,7 @@ def reset_password():
 
         if user_doc:
             token = generar_token(email, salt='recuperar-password')
-            link = url_for('reset', token=token, _external=True)
+            link = url_for('auth.reset', token=token, _external=True)
             enviado = enviar_email(
             email,
             "Recuperá tu contraseña - Habits App",
@@ -248,7 +247,7 @@ def reset_password():
             </html>
             """
             )
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
     
     return render_template('reset_password.html')
 
@@ -258,7 +257,7 @@ def reset(token):
     email = verificar_token(token, salt='recuperar-password', max_age=1800)
     if not email:
         flash("El enlace es inválido o expiró", 'error')
-        return redirect(url_for('reset_password'))
+        return redirect(url_for('auth.reset_password'))
     
     if request.method == 'POST':
         nueva = request.form['password']
@@ -266,20 +265,20 @@ def reset(token):
 
         if nueva != confirma:
             flash("Las contraseñas no coinciden", 'error')
-            return redirect(url_for('reset', token=token))
+            return redirect(url_for('auth.reset', token=token))
         
         if len(nueva) < 8:
             flash("La contraseña debe tener al menos 8 caracteres", 'error')
-            return redirect(url_for('reset', token=token))
+            return redirect(url_for('auth.reset', token=token))
         
         if len(nueva) > 128:
             flash("La contraseña no puede tener más de 100 caracteres", 'error')
-            return redirect(url_for('reset', token=token))
+            return redirect(url_for('auth.reset', token=token))
         
         hashed = bcrypt.generate_password_hash(nueva).decode('utf-8')
         collection.update_one({'email': email}, {'$set': {'password': hashed}})
         flash("Contraseña actualizada correctamente")
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
     
     return render_template('reset.html', token=token)
 
@@ -292,7 +291,7 @@ def logout():
 @auth_bp.route('/delete_account', methods=['GET', 'POST'])
 def delete_account():
     if 'user' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
     
     borrar_usuario = session['user']
 
@@ -302,12 +301,12 @@ def delete_account():
         if resultado.deleted_count > 0:
             session.clear()
             flash("Tu cuenta ha sido eliminada permanentemente. Esperamos verte pronto.", 'success')
-            return redirect(url_for('home'))
+            return redirect(url_for('main.home'))
         
         else:
             flash("No se pudo encontrar la cuenta para eliminar.", 'error')
-            return redirect(url_for('settings'))
+            return redirect(url_for('main.settings'))
         
     except Exception as e:
         print(f"Error al eliminar la cuenta: {e}")
-        return redirect(url_for('settings'))
+        return redirect(url_for('main.settings'))

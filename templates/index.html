@@ -234,14 +234,20 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script>
+        window.USER_LOGGED_IN = "{{ 'true' if session.get('user') else 'false '}}"
+    </script>
+
     <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/render.js') }}"></script>
     <script src="{{ url_for('static', filename='js/habits.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sync.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/render.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <script src="{{ url_for('static', filename='js/deleteMode.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
 </body>
 </html>

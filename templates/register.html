@@ -28,7 +28,7 @@
         </div>
 
         <div class="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
-            <form action="/register" method="POST" class="space-y-5">
+            <form action="{{ url_for('auth.register') }}" method="POST" class="space-y-5">
                 
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Tu Nombre</label>

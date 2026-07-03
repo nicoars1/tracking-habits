@@ -78,24 +78,20 @@ function closeModalDelete() {
 function openDayModal(dateStr) {
     const habits = loadData();
     
-    // 1. Filtrar qué hábitos se hicieron ese día exacto (misma lógica que el calendario)
     const completedHabits = habits.filter(h => {
         const didComplete = h.completedDates.includes(dateStr);
         const isHiddenBecauseArchived = h.archived && h.archivedDate && dateStr >= h.archivedDate;
         return didComplete && !isHiddenBecauseArchived;
     });
 
-    // 2. Formatear la fecha para el título (Ej: "15 de Febrero, 2026")
     const [year, month, day] = dateStr.split('-');
     const dateObj = new Date(year, month - 1, day);
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     document.getElementById('day-modal-title').innerText = dateObj.toLocaleDateString('es-ES', options);
 
-    // 3. Dibujar la lista
     const content = document.getElementById('day-modal-content');
     
     if (completedHabits.length === 0) {
-        // Mensaje si no hizo nada
         content.innerHTML = `
             <div class="flex flex-col items-center justify-center py-10 opacity-50">
                 <span class="text-4xl mb-3">📭</span>
@@ -221,7 +217,6 @@ function openDeleteAccountModal() {
     
     setTimeout(() => {
         overlay.classList.remove('opacity-0');
-        // Quitamos la reducción de escala y la invisibilidad para que haga "zoom in"
         card.classList.remove('scale-95', 'opacity-0');
     }, 10);
 }
@@ -232,7 +227,6 @@ function closeDeleteAccountModal() {
     const card = document.getElementById('delete-account-card');
 
     overlay.classList.add('opacity-0');
-    // Volvemos a achicar la tarjeta para que desaparezca
     card.classList.add('scale-95', 'opacity-0');
     
     setTimeout(() => {

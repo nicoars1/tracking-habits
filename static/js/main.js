@@ -1,4 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+
+    if (window.USER_LOGGED_IN === 'true') {
+        await syncLocalToDB();
+    }
+
     // Si estamos en el index (pantalla Hoy)
     if (document.getElementById('lista-habitos')) {
         const opcionesFecha = { day: 'numeric', month: 'long' };
@@ -9,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //document.getElementById('dia-numero').innerText = date.getDate();
 
         renderWeekStrip();
-        render();
+        await render();
     }
     
     // Si estamos en el calendario (pantalla Mes)

@@ -1,12 +1,12 @@
-function render() {
-    const habits = loadData();
+async function render() {
+    const habits = await loadData();
     const container = document.getElementById('lista-habitos');
     container.innerHTML = '';
     let completedCount = 0;
     const activeHabits = habits.filter(h => !h.archived);
 
     activeHabits.forEach(habit => {
-        const isCompleted = habit.completedDates.includes(TODAY);
+        const isCompleted = habit.completedDates.some(d => d.startsWith(TODAY));
         if(isCompleted) completedCount++;
 
         let cardClasses = "group relative rounded-2xl p-4 flex items-center justify-between transition-all duration-200 cursor-pointer overflow-hidden border ";
