@@ -32,8 +32,8 @@ function confirmDeletion() {
     }
 }
 
-function executeDeletion() {
-    let habits = loadData();
+async function executeDeletion() {
+    let habits = await loadData();
     
     habits = habits.map(h => {
         if (itemsToDelete.includes(h.id)) {

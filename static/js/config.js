@@ -2,10 +2,10 @@ date = new Date();
 const TODAY = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
 const defaultHabits = [
-    { id: 1, title: "Leer 30 mins", subtitle: "Libro: Atomic Habits", icon: "📚", color: "orange", completedDates: [] },
-    { id: 2, title: "Entrenamiento", subtitle: "Rutina de fuerza", icon: "💪", color: "green", completedDates: [] },
-    { id: 3, title: "Beber 2L Agua", subtitle: "Hidratación diaria", icon: "💧", color: "blue", completedDates: [] },
-    { id: 4, title: "Meditar", subtitle: "10 min de calma", icon: "🧘", color: "purple", completedDates: [] }
+    { id: 1, title: "Leer 30 mins", subtitle: "Libro: Atomic Habits", icon: "📚", color: "orange", time: null, streak: 0, completedDates: [] },
+    { id: 2, title: "Entrenamiento", subtitle: "Rutina de fuerza", icon: "💪", color: "green", time: null, streak: 0, completedDates: [] },
+    { id: 3, title: "Beber 2L Agua", subtitle: "Hidratación diaria", icon: "💧", color: "blue", time: null, streak: 0, completedDates: [] },
+    { id: 4, title: "Meditar", subtitle: "10 min de calma", icon: "🧘", color: "purple", time: null, streak: 0, completedDates: [] }
 ];
 
 const AVAILABLE_COLORS = [
