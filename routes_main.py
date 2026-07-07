@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request
+from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request, flash
 from app import collection
 
 main_bp = Blueprint('main', __name__)
@@ -21,6 +21,7 @@ def calendario():
 @main_bp.route('/settings')
 def settings():
     if 'user' not in session:
+        flash("Debe iniciar sesión para entrar a los ajustes", "error")
         return redirect(url_for('auth.login'))
     
     usuario_actual = collection.find_one({'user':session['user']})

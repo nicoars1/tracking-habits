@@ -25,6 +25,7 @@ def login():
                 flash("Debe verificar su email antes de iniciar sesión", 'error')
                 return redirect(url_for('auth.login'))
             session['user'] = user_doc['user']
+            flash("Sesión iniciada correctamente", 'success')
             return redirect(url_for('main.home'))
         else:
             flash("Usuario o contraseña incorrectos", 'error')
