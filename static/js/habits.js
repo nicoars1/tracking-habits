@@ -28,14 +28,14 @@ async function toggleHabit(id) {
       }
       return;
   }
-  
+
   const habits = await loadData();
   const habitIndex = habits.findIndex(h => h.id === id);
   if (habitIndex > -1) {
-      const habit = habits[habitIndex];
-      const yaCompletadoHoy = habit.completedDates.some(d => d.startsWith(TODAY_LOCAL));
+    const habit = habits[habitIndex];
+    const yaCompletadoHoy = habit.completedDates.some(d => toLocalDateString(d) === TODAY_LOCAL);
 
-      habit.completedDates = habit.completedDates.filter(d => !d.startsWith(TODAY_LOCAL));
+    habit.completedDates = habit.completedDates.filter(d => toLocalDateString(d) !== TODAY_LOCAL);
 
       if (!yaCompletadoHoy) {
           habit.completedDates.push(EXACT_TIME);
