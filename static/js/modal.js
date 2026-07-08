@@ -79,7 +79,7 @@ function openDayModal(dateStr) {
     const habits = loadData();
     
     const completedHabits = habits.filter(h => {
-        const didComplete = h.completedDates.includes(dateStr);
+        const didComplete = h.completedDates.some(d => toLocalDateString(d) === dateStr);
         const isHiddenBecauseArchived = h.archived && h.archivedDate && dateStr >= h.archivedDate;
         return didComplete && !isHiddenBecauseArchived;
     });

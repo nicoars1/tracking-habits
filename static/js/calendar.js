@@ -40,7 +40,7 @@ async function renderCalendar() {
         const isToday = dateStr === TODAY;
         
         const completedHabits = habits.filter(h => {
-            const didComplete = h.completedDates.includes(dateStr);
+            const didComplete = h.completedDates.some(d => toLocalDateString(d) === dateStr);
 
             const isHiddenBecauseArchived = h.archived && h.archivedDate && dateStr >= h.archivedDate;
 

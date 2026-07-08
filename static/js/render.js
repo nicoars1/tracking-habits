@@ -6,7 +6,7 @@ async function render() {
     const activeHabits = habits.filter(h => !h.archived);
 
     activeHabits.forEach(habit => {
-        const isCompleted = habit.completedDates.some(d => d.startsWith(TODAY));
+        const isCompleted = habit.completedDates.some(d => toLocalDateString(d) === TODAY);
         if(isCompleted) completedCount++;
 
         let cardClasses = "group relative rounded-2xl p-4 flex items-center justify-between transition-all duration-200 cursor-pointer overflow-hidden border ";

@@ -34,3 +34,8 @@ function enableDragScroll(elementId) {
         slider.scrollLeft = scrollLeft - walk;
     });
 }
+
+function toLocalDateString(isoString) {
+    const d = new Date(isoString);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}

@@ -4,8 +4,7 @@ import re
 import os
 from pymongo import MongoClient
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 from dotenv import load_dotenv
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
@@ -24,6 +23,7 @@ collection = db["users"]
 EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 MAIL_USER = os.getenv("MAIL_USER")
 MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+BREVO_KEY = os.getenv("BREVO_KEY")
 s = Serializer(app.secret_key)
 
 # Funciones de utilidad
@@ -37,16 +37,25 @@ def verificar_token(token, salt, max_age=3600):
         return None
     
 def enviar_email(destinatario, asunto, contenido_html):
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = asunto
-    msg['From'] = MAIL_USER
-    msg['To'] = destinatario
-    msg.attach(MIMEText(contenido_html, 'html'))
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_KEY,
+        "content-type": "application/json"
+    }
+    payload = {
+        "sender": {"email": MAIL_USER},
+        "to": [{"email": destinatario}],
+        "subject": asunto,
+        "htmlContent": contenido_html
+    }
     try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as servidor:
-            servidor.login(MAIL_USER, MAIL_PASSWORD)
-            servidor.sendmail(MAIL_USER, destinatario, msg.as_string())
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        if response.status_code in (200, 201):
             return True
+        else:
+            print(f"Error enviando email: {response.status_code} - {response.text}")
+            return False
     except Exception as e:
         print(f"Error enviando email: {e}")
         return False

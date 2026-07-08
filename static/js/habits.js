@@ -1,49 +1,51 @@
 async function toggleHabit(id) {
-    const EXACT_TIME = new Date().toISOString();
-    const TODAY = EXACT_TIME.split('T')[0];
-  
-    if (isDeleteMode) {
+  const now = new Date();
+  const EXACT_TIME = now.toISOString();
+  const TODAY_LOCAL = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const TZ_OFFSET = now.getTimezoneOffset(); // minutos, ej: 180 para Argentina (UTC-3)
+
+  if (isDeleteMode) {
       if (itemsToDelete.includes(id)) {
-        itemsToDelete = itemsToDelete.filter(itemId => itemId !== id);
+          itemsToDelete = itemsToDelete.filter(itemId => itemId !== id);
       } else {
-        itemsToDelete.push(id);
-        if (navigator.vibrate) navigator.vibrate(20);
+          itemsToDelete.push(id);
+          if (navigator.vibrate) navigator.vibrate(20);
       }
       render();
       return;
-    }
-  
-    if (window.USER_LOGGED_IN === 'true') {
+  }
+
+  if (window.USER_LOGGED_IN === 'true') {
       try {
-        await fetch('/api/habits/toggle', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, date: EXACT_TIME, day: TODAY })
-        });
-        render();
+          await fetch('/api/habits/toggle', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id, date: EXACT_TIME, day: TODAY_LOCAL, offset: TZ_OFFSET })
+          });
+          render();
       } catch (err) {
-        console.error("Error toggle DB:", err);
+          console.error("Error toggle DB:", err);
       }
       return;
-    }
+  }
   
-    const habits = await loadData();
-    const habitIndex = habits.findIndex(h => h.id === id);
-    if (habitIndex > -1) {
+  const habits = await loadData();
+  const habitIndex = habits.findIndex(h => h.id === id);
+  if (habitIndex > -1) {
       const habit = habits[habitIndex];
-      const yaCompletadoHoy = habit.completedDates.some(d => d.startsWith(TODAY));
-  
-      habit.completedDates = habit.completedDates.filter(d => !d.startsWith(TODAY));
-  
+      const yaCompletadoHoy = habit.completedDates.some(d => d.startsWith(TODAY_LOCAL));
+
+      habit.completedDates = habit.completedDates.filter(d => !d.startsWith(TODAY_LOCAL));
+
       if (!yaCompletadoHoy) {
-        habit.completedDates.push(EXACT_TIME);
-        if (navigator.vibrate) navigator.vibrate(40);
+          habit.completedDates.push(EXACT_TIME);
+          if (navigator.vibrate) navigator.vibrate(40);
       }
-  
+
       habits[habitIndex] = habit;
       await saveData(habits);
-    }
   }
+}
 
 async function saveNewHabit() {
     const name = document.getElementById('input-nombre').value;
