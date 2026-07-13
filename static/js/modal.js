@@ -75,8 +75,8 @@ function closeModalDelete() {
 }
 
 // Day Modal
-function openDayModal(dateStr) {
-    const habits = loadData();
+async function openDayModal(dateStr) {
+    const habits = await loadData();
     
     const completedHabits = habits.filter(h => {
         const didComplete = h.completedDates.some(d => toLocalDateString(d) === dateStr);
