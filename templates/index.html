@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Habits App</title>
+    <title>ruti</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -12,19 +12,21 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="../static/img/favicon.ico">
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
 
     <header class="sticky top-0 z-20 bg-gray-50/90 backdrop-blur-md border-b border-gray-200/50 px-6 pt-12 pb-4">
         <div class="flex justify-between items-end">
             <div>
-                <p id="header-dia-semana" class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Cargando...</p>
-                <h1 id="header-fecha" class="text-3xl font-bold tracking-tight text-gray-900">...</h1>
+                <p id="header-dia-semana" class="text-sm font-semibold text-[#174028]/60 uppercase tracking-wide">Cargando...</p>
+                <h1 id="header-fecha" class="text-3xl font-bold tracking-tight text-[#25633f]">...</h1>
+
             </div>
             {% if 'user' in session %}
     
                 <button onclick="openProfileModal()" class="focus:outline-none transform active:scale-95 transition-transform">
-                    <div class="h-10 w-10 bg-gray-200 rounded-full overflow-hidden border border-gray-300 shadow-sm">
+                    <div class="h-10 w-10 bg-white rounded-full overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center text-gray-400 hover:text-[#25633f] hover:border-[#25633f] hover:bg-gray-50 transition-colors">
                         <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ session['user'] }}" alt="Usuario" class="w-full h-full object-cover">
                     </div>
                 </button>
@@ -61,28 +63,28 @@
         <div id="lista-habitos" class="space-y-3"></div>
         
 
-        <div class="mt-8 bg-black rounded-3xl p-6 text-white shadow-xl shadow-gray-400/50 relative overflow-hidden transition-all duration-500">
+        <div class="mt-8 bg-[#25633f] rounded-3xl p-6 text-[#f2e8c9] shadow-xl shadow-[#25633f]/30 relative overflow-hidden transition-all duration-500">
             <div class="relative z-10">
-                <span class="text-gray-400 text-xs font-bold uppercase">Progreso Diario</span>
-                <div id="progress-text" class="text-4xl font-bold mt-1">0%</div>
-                <p id="progress-msg" class="text-sm text-gray-400 mt-2">¡Vamos a por ello!</p>
+                <span class="text-[#a5c663] text-xs font-bold uppercase tracking-wider">Progreso Diario</span>
+                <div id="progress-text" class="text-4xl font-bold mt-1 text-[#f2e8c9]">0%</div>
+                <p id="progress-msg" class="text-[#f2e8c9]/70 text-sm mt-2">¡Vamos a por ello!</p>
             </div>
-            <div class="absolute -right-6 -bottom-10 w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full blur-2xl opacity-50"></div>
+            <div class="absolute -right-6 -bottom-10 w-32 h-32 bg-gradient-to-br from-[#a5c663] to-[#174028] rounded-full blur-2xl opacity-40"></div>
         </div>
 
     </main>
 
     <nav class="fixed bottom-0 w-full bg-white/80 backdrop-blur-xl border-t border-gray-200 pb-safe pt-2 px-6 z-50">
         <div class="flex justify-between items-center max-w-md mx-auto h-16">
-            <button class="flex flex-col items-center gap-1 text-blue-600 w-16">
+            <button class="flex flex-col items-center gap-1 text-[#25633f] w-16">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
                 <span class="text-[10px] font-medium">Hoy</span>
             </button>
-            <a class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 w-16" href="{{ url_for('main.calendario') }}">
+            <a class="flex flex-col items-center gap-1 text-gray-400 hover:text-[#25633f] transition-colors w-16" href="{{ url_for('main.calendario') }}">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 <span class="text-[10px] font-medium">Mes</span>
             </a>
-            <button id="main-fab" onclick="handleFabClick()" class="bg-black text-white rounded-full p-4 -mt-8 shadow-lg shadow-blue-900/20 active:scale-90 transition-all duration-300">
+            <button id="main-fab" onclick="handleFabClick()" class="bg-[#25633f] text-[#f2e8c9] rounded-full p-4 -mt-8 shadow-lg shadow-[#25633f]/30 active:scale-90 transition-all duration-300">
     
                 <svg id="fab-icon-plus" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -93,11 +95,11 @@
                 </svg>
             
             </button>
-            <button onclick="openStadisticsModal()" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 w-16">
+            <button onclick="openStadisticsModal()" class="flex flex-col items-center gap-1 text-gray-400 hover:text-[#25633f] transition-colors w-16">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
                 <span class="text-[10px] font-medium">Estadísticas</span>
             </button >
-            <a href="{{ url_for('main.settings') }}" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 w-16">
+            <a href="{{ url_for('main.settings') }}" class="flex flex-col items-center gap-1 text-gray-400 hover:text-[#25633f] transition-colors w-16">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="text-[10px] font-medium">Ajustes</span>
             </a>
@@ -152,7 +154,7 @@
             </div>
     
             <div class="pt-4 mt-2 border-t border-gray-100 flex-shrink-0">
-                <button onclick="saveNewHabit()" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-gray-300 active:scale-95 transition-transform hover:shadow-2xl flex items-center justify-center gap-2">
+                <button onclick="saveNewHabit()" class="w-full bg-[#25633f] text-[#f2e8c9] py-4 rounded-2xl font-bold text-lg shadow-xl shadow-[#25633f]/20 active:scale-95 transition-transform hover:shadow-2xl flex items-center justify-center gap-2">
                     <span>Crear Hábito</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>

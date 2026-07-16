@@ -56,7 +56,7 @@ async function renderCalendar() {
             html += `
             <div id="dia-actual" class="h-20 sm:h-24 flex flex-col items-center justify-between py-2 rounded-2xl bg-gray-50 border border-gray-100 cursor-pointer" onclick="openDayModal('${dateStr}')">
                 
-                <div class="w-9 h-9 bg-black rounded-full flex items-center justify-center shadow-lg shadow-gray-400/50">
+                <div class="w-9 h-9 bg-[#25633f] rounded-full flex items-center justify-center shadow-lg shadow-gray-400/50">
                     <span class="text-base font-bold text-white">${day}</span>
                 </div>
                 
