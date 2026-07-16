@@ -233,3 +233,32 @@ function closeDeleteAccountModal() {
         modal.classList.add('hidden');
     }, 300);
 }
+
+// FUNCION PARA EL MODAL DE ESTADISTICAS
+function openStadisticsModal() {
+    const modal = document.getElementById('modal-estadistics');
+    const overlay = document.getElementById('estadistics-overlay');
+    const card = document.getElementById('estadistics-card');
+
+    modal.classList.remove('hidden');
+
+    setTimeout(() => {
+       overlay.classList.remove('opacity-0');
+       card.classList.remove('scale-95', 'opacity-0'); 
+       card.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeModalStadistics() {
+    const modal = document.getElementById('modal-estadistics');
+    const overlay = document.getElementById('estadistics-overlay');
+    const card = document.getElementById('estadistics-card');
+
+    overlay.classList.add('opacity-0');
+    card.classList.remove('scale-100', 'opacity-100');
+    card.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
