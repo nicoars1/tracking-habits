@@ -12,7 +12,11 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="icon" href="../static/img/favicon.ico">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <meta property="og:title" content="ruti — Seguimiento de hábitos">
+    <meta property="og:description" content="Una app simple para trackear tus hábitos diarios.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/ruti-logo.png', _external=True) }}">
+    <meta property="og:type" content="website">
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
 
